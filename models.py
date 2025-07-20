@@ -56,7 +56,7 @@ def initialize_database():
                     job_id INTEGER NOT NULL,
                     user_id INTEGER NOT NULL,
                     cover_letter TEXT,
-                    cv_filename TEXT,
+                    cv_filename BLOB,
                     applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     status TEXT DEFAULT 'pending' CHECK(status IN ('pending', 'reviewed', 'accepted', 'rejected')),
                     FOREIGN KEY (job_id) REFERENCES jobs (id),

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h1 class="card-title">{{ job.title }}</h1>
+        <h2 class="card-subtitle mb-2 text-muted">{{ job.company }}</h2>
+        <p class="text-muted"><i class="fas fa-map-marker-alt"></i> {{ job.location }}</p>
+        <p class="text-success"><i class="fas fa-money-bill-wave"></i> {{ job.salary }}</p>
+        
+        <div class="mt-4">
+            <h3>Job Description</h3>
+            <p class="card-text">{{ job.description }}</p>
+        </div>
+        
+        {% if 'user_id' in session %}
+            {% if session['user_type'] == 'job_seeker' and not has_applied %}
+                <div class="mt-4">
+                    <h3>Apply for this position</h3>
+                    <form method="POST" action="{{ url_for('apply_job', job_id=job.id) }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="cover_letter" class="form-label">Cover Letter</label>
+                            <textarea class="form-control" id="cover_letter" name="cover_letter" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cv" class="form-label">Upload CV (PDF, DOC, DOCX)</label>
+                            <input class="form-control" type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Application</button>
+                    </form>
+                </div>
+            {% elif has_applied %}
+                <div class="alert alert-info mt-4">
+                    <p>You have already applied for this job.</p>
+                    <p>Status: <strong>{{ application_status|capitalize }}</strong></p>
+                </div>
+            {% elif session['user_type'] == 'employer' and job.posted_by == session['user_id'] %}
+                <div class="mt-4">
+                    <h3>Applications for this position</h3>
+                    {% if applications %}
+                        <div class="list-group">
+                            {% for app in applications %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ app.username }}</h5>
+                                    <small>Applied on {{ app.applied_at|datetimeformat }}</small>
+                                </div>
+                                <p class="mb-1">Status: 
+                                    <span class="badge 
+                                        {% if app.status == 'accepted' %}bg-success
+                                        {% elif app.status == 'rejected' %}bg-danger
+                                        {% elif app.status == 'reviewed' %}bg-warning
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ app.status|capitalize }}
+                                    </span>
+                                </p>
+                                <div class="mt-2">
+                                    <a href="{{ url_for('view_cv', app_id=app.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-download"></i> Download CV
+                                    </a>
+                                    <form method="POST" action="{{ url_for('update_application_status', app_id=app.id) }}" class="d-inline">
+                                        <select name="status" class="form-select form-select-sm d-inline w-auto">
+                                            <option value="pending" {% if app.status == 'pending' %}selected{% endif %}>Pending</option>
+                                            <option value="reviewed" {% if app.status == 'reviewed' %}selected{% endif %}>Reviewed</option>
+                                            <option value="accepted" {% if app.status == 'accepted' %}selected{% endif %}>Accepted</option>
+                                            <option value="rejected" {% if app.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">Update</button>
+                                    </form>
+                                </div>
+                                {% if app.cover_letter %}
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#coverLetter{{ app.id }}">
+                                        View Cover Letter
+                                    </button>
+                                    <div class="collapse" id="coverLetter{{ app.id }}">
+                                        <div class="card card-body">
+                                            {{ app.cover_letter }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            No applications received yet.
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-info mt-4">
+                <p><a href="{{ url_for('login') }}" class="alert-link">Login</a> as a job seeker to apply for this position.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

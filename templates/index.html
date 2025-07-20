@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="hero bg-light p-5 mb-4 rounded-3">
+    <div class="container-fluid py-5 text-center">
+        <h1 class="display-5 fw-bold">Find Your Dream Job</h1>
+        <p class="fs-4">Browse thousands of job listings and find the perfect match for your skills</p>
+        <a href="{{ url_for('job_list') }}" class="btn btn-primary btn-lg">Browse Jobs</a>
+    </div>
+</div>
+
+<div class="row">
+    <h2 class="mb-4">Featured Jobs</h2>
+    {% for job in jobs %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ job.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ job.company }}</h6>
+                <p class="card-text">{{ job.location }}</p>
+                <p class="card-text text-success">{{ job.salary }}</p>
+                <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-primary">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

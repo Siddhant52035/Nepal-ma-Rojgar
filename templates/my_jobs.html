@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}My Jobs{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if is_employer %}
+        <h1 class="mb-4">My Posted Jobs</h1>
+        
+        {% if jobs %}
+            <div class="list-group">
+                {% for job in jobs %}
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">
+                            <a href="{{ url_for('job_detail', job_id=job.id) }}">{{ job.title }}</a>
+                        </h5>
+                        <small>{{ job.created_at|datetimeformat }}</small>
+                    </div>
+                    <p class="mb-1">{{ job.company }} - {{ job.location }}</p>
+                    <p class="mb-1 text-success">{{ job.salary }}</p>
+                    <span class="badge bg-primary rounded-pill">{{ job.application_count }} application(s)</span>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                You haven't posted any jobs yet.
+            </div>
+            <a href="{{ url_for('post_job') }}" class="btn btn-primary">Post a Job</a>
+        {% endif %}
+    {% else %}
+        <h1 class="mb-4">My Job Applications</h1>
+        
+        {% if applications %}
+            <div class="list-group">
+                {% for app in applications %}
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">
+                            <a href="{{ url_for('job_detail', job_id=app.job_id) }}">{{ app.title }}</a>
+                        </h5>
+                        <small>Applied on {{ app.applied_at|datetimeformat }}</small>
+                    </div>
+                    <p class="mb-1">{{ app.company }}</p>
+                    <p class="mb-1">Status: 
+                        <span class="badge 
+                            {% if app.status == 'accepted' %}bg-success
+                            {% elif app.status == 'rejected' %}bg-danger
+                            {% elif app.status == 'reviewed' %}bg-warning
+                            {% else %}bg-secondary{% endif %}">
+                            {{ app.status|capitalize }}
+                        </span>
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                You haven't applied to any jobs yet.
+            </div>
+            <a href="{{ url_for('job_list') }}" class="btn btn-primary">Browse Jobs</a>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

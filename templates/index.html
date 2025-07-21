@@ -1,30 +1,276 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+<!-- Hero Section -->
+<div
+  class="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-2xl shadow-2xl mb-12"
+>
+  <div class="absolute inset-0 bg-black opacity-10"></div>
+  <div
+    class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-5"
+  ></div>
 
-{% block title %}Home{% endblock %}
+  <!-- Decorative elements -->
+  <div
+    class="absolute top-0 left-0 w-40 h-40 bg-white opacity-10 rounded-full -translate-x-20 -translate-y-20"
+  ></div>
+  <div
+    class="absolute bottom-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full translate-x-32 translate-y-32"
+  ></div>
 
-{% block content %}
-<div class="hero bg-light p-5 mb-4 rounded-3">
-    <div class="container-fluid py-5 text-center">
-        <h1 class="display-5 fw-bold">Find Your Dream Job</h1>
-        <p class="fs-4">Browse thousands of job listings and find the perfect match for your skills</p>
-        <a href="{{ url_for('job_list') }}" class="btn btn-primary btn-lg">Browse Jobs</a>
+  <div class="relative px-8 py-16 sm:py-20 lg:py-24 text-center">
+    <div class="max-w-4xl mx-auto">
+      <!-- Main heading with enhanced typography -->
+      <h1
+        class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+      >
+        Find Your
+        <span
+          class="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent"
+        >
+          Dream Job
+        </span>
+      </h1>
+
+      <!-- Subtitle with better spacing -->
+      <p
+        class="text-xl sm:text-2xl text-white text-primary-100 mb-8 max-w-3xl mx-auto leading-relaxed"
+      >
+        Browse thousands of job listings and find the perfect match for your
+        skills in Nepal's growing job market
+      </p>
+
+      <!-- CTA Button with enhanced styling -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a
+          href="{{ url_for('job_list') }}"
+          class="group bg-white text-primary-700 hover:bg-primary-50 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl flex items-center"
+        >
+          <i
+            class="fas fa-search mr-3 group-hover:scale-110 transition-transform duration-300"
+          ></i>
+          Browse Jobs
+          <i
+            class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform duration-300"
+          ></i>
+        </a>
+
+        {% if 'user_id' not in session %}
+        <a
+          href="{{ url_for('register') }}"
+          class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary-700 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+        >
+          Get Started
+        </a>
+        {% endif %}
+      </div>
+
+      
     </div>
+  </div>
 </div>
 
-<div class="row">
-    <h2 class="mb-4">Featured Jobs</h2>
+<!-- Featured Jobs Section -->
+<div class="mb-12">
+  <!-- Section Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">Featured Jobs</h2>
+      <p class="text-gray-600">
+        Discover the latest opportunities from top companies
+      </p>
+    </div>
+    <a
+      href="{{ url_for('job_list') }}"
+      class="text-primary-600 hover:text-primary-700 font-semibold flex items-center transition-colors duration-200"
+    >
+      View All Jobs
+      <i class="fas fa-arrow-right ml-2"></i>
+    </a>
+  </div>
+
+  <!-- Jobs Grid -->
+  {% if jobs %}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for job in jobs %}
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="card-title">{{ job.title }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ job.company }}</h6>
-                <p class="card-text">{{ job.location }}</p>
-                <p class="card-text text-success">{{ job.salary }}</p>
-                <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-primary">View Details</a>
+    <div
+      class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden"
+    >
+      <!-- Card Header -->
+      <div class="p-6 border-b border-gray-100">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex-1">
+            <h3
+              class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors duration-200 line-clamp-2"
+            >
+              {{ job.title }}
+            </h3>
+            <div class="flex items-center text-gray-600 mb-2">
+              <i class="fas fa-building mr-2 text-primary-500"></i>
+              <span class="font-medium">{{ job.company }}</span>
             </div>
+          </div>
+          <div class="ml-4">
+            <div
+              class="w-12 h-12 bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg flex items-center justify-center"
+            >
+              <i class="fas fa-briefcase text-primary-600"></i>
+            </div>
+          </div>
         </div>
+
+        <!-- Job Details -->
+        <div class="space-y-2">
+          <div class="flex items-center text-gray-600">
+            <i class="fas fa-map-marker-alt mr-2 text-gray-400 w-4"></i>
+            <span class="text-sm">{{ job.location }}</span>
+          </div>
+
+          {% if job.salary %}
+          <div class="flex items-center text-green-600">
+            <i class="fas fa-dollar-sign mr-2 text-green-500 w-4"></i>
+            <span class="text-sm font-semibold">{{ job.salary }}</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Card Footer -->
+      <div class="p-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            {% if job.job_type %}
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+            >
+              {{ job.job_type }}
+            </span>
+            {% endif %} {% if job.created_at %}
+            <span class="text-xs text-gray-500">
+              <i class="fas fa-clock mr-1"></i>
+              {% if job.created_at is string %} {{ job.created_at }} {% else %}
+              {{ job.created_at.strftime('%b %d') }} {% endif %}
+            </span>
+            {% endif %}
+          </div>
+
+          <a
+            href="{{ url_for('job_detail', job_id=job.id) }}"
+            class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 group"
+          >
+            View Details
+            <i
+              class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-200"
+            ></i>
+          </a>
+        </div>
+      </div>
     </div>
     {% endfor %}
+  </div>
+  {% else %}
+  <!-- Empty State -->
+  <div
+    class="text-center py-12 bg-white rounded-xl border-2 border-dashed border-gray-200"
+  >
+    <div
+      class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
+    >
+      <i class="fas fa-briefcase text-gray-400 text-2xl"></i>
+    </div>
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+      No Featured Jobs Yet
+    </h3>
+    <p class="text-gray-600 mb-6">
+      Check back soon for exciting job opportunities!
+    </p>
+    <a
+      href="{{ url_for('job_list') }}"
+      class="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors duration-200"
+    >
+      Browse All Jobs
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Additional Features Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+  <!-- For Job Seekers -->
+  <div
+    class="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-xl border border-blue-200"
+  >
+    <div
+      class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4"
+    >
+      <i class="fas fa-user-tie text-white"></i>
+    </div>
+    <h3 class="text-xl font-semibold text-gray-900 mb-3">For Job Seekers</h3>
+    <p class="text-gray-600 mb-4">
+      Find your perfect job match with our advanced search and filtering
+      options.
+    </p>
+    {% if 'user_id' not in session or session['user_type'] != 'employer' %}
+    <a
+      href="{{ url_for('job_list') }}"
+      class="text-blue-600 hover:text-blue-700 font-semibold flex items-center"
+    >
+      Start Searching
+      <i class="fas fa-arrow-right ml-2"></i>
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- For Employers -->
+  <div
+    class="bg-gradient-to-br from-green-50 to-emerald-100 p-8 rounded-xl border border-green-200"
+  >
+    <div
+      class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mb-4"
+    >
+      <i class="fas fa-building text-white"></i>
+    </div>
+    <h3 class="text-xl font-semibold text-gray-900 mb-3">For Employers</h3>
+    <p class="text-gray-600 mb-4">
+      Post jobs and connect with qualified candidates from across Nepal.
+    </p>
+    {% if 'user_id' in session and session['user_type'] == 'employer' %}
+    <a
+      href="{{ url_for('post_job') }}"
+      class="text-green-600 hover:text-green-700 font-semibold flex items-center"
+    >
+      Post a Job
+      <i class="fas fa-arrow-right ml-2"></i>
+    </a>
+    {% else %}
+    <a
+      href="{{ url_for('register') }}"
+      class="text-green-600 hover:text-green-700 font-semibold flex items-center"
+    >
+      Get Started
+      <i class="fas fa-arrow-right ml-2"></i>
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- Success Stories -->
+  <div
+    class="bg-gradient-to-br from-purple-50 to-pink-100 p-8 rounded-xl border border-purple-200"
+  >
+    <div
+      class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mb-4"
+    >
+      <i class="fas fa-star text-white"></i>
+    </div>
+    <h3 class="text-xl font-semibold text-gray-900 mb-3">Success Stories</h3>
+    <p class="text-gray-600 mb-4">
+      Join thousands who found their dream jobs through our platform.
+    </p>
+    <div
+      class="text-purple-600 hover:text-purple-700 font-semibold flex items-center cursor-pointer"
+    >
+      Read Stories
+      <i class="fas fa-arrow-right ml-2"></i>
+    </div>
+  </div>
 </div>
 {% endblock %}

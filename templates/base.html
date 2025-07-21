@@ -1,78 +1,524 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Job Portal{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">Job Portal</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#eff6ff",
+                500: "#3b82f6",
+                600: "#2563eb",
+                700: "#1d4ed8",
+                800: "#1e40af",
+                900: "#1e3a8a",
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-primary-700 to-primary-800 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo/Brand -->
+          <div class="flex-shrink-0">
+            <a
+              href="{{ url_for('index') }}"
+              class="text-white text-xl font-bold hover:text-primary-100 transition-colors duration-200"
+            >
+              Nepal Ma Rojgaar
+            </a>
+          </div>
+
+          <!-- Mobile menu button -->
+          <div class="md:hidden">
+            <button
+              id="mobile-menu-button"
+              class="text-white hover:text-primary-100 focus:outline-none focus:text-primary-100 transition-colors duration-200"
+            >
+              <i class="fas fa-bars text-xl"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('job_list') }}">Browse Jobs</a>
-                    </li>
-                    {% if 'user_id' in session %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('my_jobs') }}">My Jobs</a>
-                        </li>
-                        {% if session['user_type'] == 'employer' %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('post_job') }}">Post a Job</a>
-                            </li>
-                        {% endif %}
-                    {% endif %}
-                </ul>
-                <ul class="navbar-nav">
-                    {% if 'user_id' in session %}
-                        <li class="nav-item">
-                            <span class="navbar-text me-3">Hello, {{ session['username'] }}</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
-                        </li>
-                    {% endif %}
-                </ul>
+          </div>
+
+          <!-- Desktop Navigation -->
+          <div class="hidden md:flex md:items-center md:space-x-20">
+            <!-- Left Navigation -->
+            <div class="flex space-x-6">
+              <a
+                href="{{ url_for('job_list') }}"
+                class="text-white hover:text-primary-100 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+              >
+                Browse Jobs
+              </a>
+              {% if 'user_id' in session %}
+              <a
+                href="{{ url_for('my_jobs') }}"
+                class="text-white hover:text-primary-100 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+              >
+                <i class="fas fa-user-briefcase mr-2"></i>My Jobs
+              </a>
+              {% if session['user_type'] == 'employer' %}
+              <a
+                href="{{ url_for('post_job') }}"
+                class="bg-primary-600 hover:bg-primary-500 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+              >
+                <i class="fas fa-plus mr-2"></i>Post a Job
+              </a>
+              {% endif %} {% endif %}
             </div>
+
+            <!-- Right Navigation -->
+            <div class="flex items-center space-x-4">
+              {% if 'user_id' in session %}
+              <span class="text-white font-semibold text-sm">
+                <i class="fas fa-user mr-2"></i>Hello, {{ session['username'] }}
+              </span>
+              <a
+                href="{{ url_for('logout') }}"
+                class="text-white hover:text-red-200 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+              >
+                <i class="fas fa-sign-out-alt mr-2"></i>
+              </a>
+              {% else %}
+              <a
+                href="{{ url_for('login') }}"
+                class="text-white hover:text-primary-100 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+              >
+                <i class="fas fa-sign-in-alt mr-2"></i>Login
+              </a>
+              <a
+                href="{{ url_for('register') }}"
+                class="bg-white text-primary-700 hover:bg-primary-50 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+              >
+                <i class="fas fa-user-plus mr-2"></i>Register
+              </a>
+              {% endif %}
+            </div>
+          </div>
         </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="md:hidden hidden">
+          <div class="px-2 pt-2 pb-3 space-y-1 border-t border-primary-600">
+            <a
+              href="{{ url_for('job_list') }}"
+              class="text-white hover:bg-primary-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+            >
+              <i class="fas fa-briefcase mr-2"></i>Browse Jobs
+            </a>
+            {% if 'user_id' in session %}
+            <a
+              href="{{ url_for('my_jobs') }}"
+              class="text-white hover:bg-primary-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+            >
+              <i class="fas fa-user-briefcase mr-2"></i>My Jobs
+            </a>
+            {% if session['user_type'] == 'employer' %}
+            <a
+              href="{{ url_for('post_job') }}"
+              class="text-white hover:bg-primary-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+            >
+              <i class="fas fa-plus mr-2"></i>Post a Job
+            </a>
+            {% endif %}
+            <div class="border-t border-primary-600 pt-2">
+              <span class="text-white block px-3 py-2 text-base">
+                <i class="fas fa-user text-white mr-2"></i>Hello, {{
+                session['username'] }}
+              </span>
+              <a
+                href="{{ url_for('logout') }}"
+                class="text-white hover:bg-primary-600 block px-3 py-2 rounded-md text-base flex justify-end font-medium transition-colors duration-200"
+              >
+                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+              </a>
+            </div>
+            {% else %}
+            <div class="border-t border-primary-600 pt-2">
+              <a
+                href="{{ url_for('login') }}"
+                class="text-white hover:bg-primary-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+              >
+                <i class="fas fa-sign-in-alt mr-2"></i>Login
+              </a>
+              <a
+                href="{{ url_for('register') }}"
+                class="text-white hover:bg-primary-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+              >
+                <i class="fas fa-user-plus mr-2"></i>Register
+              </a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </nav>
 
-    <div class="container mt-4">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        {% block content %}{% endblock %}
-    </div>
-
-    <footer class="bg-light text-center text-lg-start mt-5">
-        <div class="text-center p-3 bg-primary text-white">
-            © 2023 Job Portal
+    <!-- Main Content -->
+    <main class="flex-1">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="mb-6 space-y-3">
+          {% for category, message in messages %}
+          <div
+            class="relative px-4 py-3 rounded-lg border-l-4 {% if category == 'success' %}bg-green-50 border-green-400 text-green-800{% elif category == 'danger' or category == 'error' %}bg-red-50 border-red-400 text-red-800{% elif category == 'warning' %}bg-yellow-50 border-yellow-400 text-yellow-800{% else %}bg-blue-50 border-blue-400 text-blue-800{% endif %} shadow-sm"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                {% if category == 'success' %}
+                <i class="fas fa-check-circle mr-2 text-green-500"></i>
+                {% elif category == 'danger' or category == 'error' %}
+                <i class="fas fa-exclamation-circle mr-2 text-red-500"></i>
+                {% elif category == 'warning' %}
+                <i class="fas fa-exclamation-triangle mr-2 text-yellow-500"></i>
+                {% else %}
+                <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+                {% endif %}
+                <span class="font-medium">{{ message }}</span>
+              </div>
+              <button
+                onclick="this.parentElement.parentElement.remove()"
+                class="text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          {% endfor %}
         </div>
+        {% endif %} {% endwith %}
+
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+
+    <!-- Professional Footer -->
+    <footer class="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 text-white mt-auto">
+      <!-- Newsletter Section -->
+      
+
+      <!-- Main Footer Content -->
+      <div class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <!-- About Section -->
+            <div>
+              <h3 class="text-xl font-bold mb-6">About</h3>
+              <p class="text-blue-100 mb-6 leading-relaxed">
+                Nepal Ma Rojgaar is Nepal's leading job portal connecting
+                talented professionals with top employers across the country.
+              </p>
+              <div class="space-y-3">
+                <div class="flex items-center text-blue-100">
+                  <i class="fas fa-phone mr-3 text-blue-200"></i>
+                  <span>+977-1-4567890</span>
+                </div>
+                <div class="flex items-center text-blue-100">
+                  <i class="fas fa-envelope mr-3 text-blue-200"></i>
+                  <span>info@nepalmarojgaar.com</span>
+                </div>
+                <div class="flex items-center text-blue-100">
+                  <i class="fas fa-map-marker-alt mr-3 text-blue-200"></i>
+                  <span>Kathmandu, Nepal</span>
+                </div>
+              </div>
+              <!-- Social Media Icons -->
+              <div class="flex space-x-4 mt-6">
+                <a
+                  href="#"
+                  class="w-10 h-10 bg-primary-700 rounded-full flex items-center justify-center hover:bg-primary-800 transition-colors duration-200"
+                >
+                  <i class="fab fa-facebook-f"></i>
+                </a>
+                <a
+                  href="#"
+                  class="w-10 h-10 bg-primary-700 rounded-full flex items-center justify-center hover:bg-primary-800 transition-colors duration-200"
+                >
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a
+                  href="#"
+                  class="w-10 h-10 bg-primary-700 rounded-full flex items-center justify-center hover:bg-primary-800 transition-colors duration-200"
+                >
+                  <i class="fab fa-linkedin-in"></i>
+                </a>
+                <a
+                  href="#"
+                  class="w-10 h-10 bg-primary-700 rounded-full flex items-center justify-center hover:bg-primary-800 transition-colors duration-200"
+                >
+                  <i class="fab fa-instagram"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Discover Section -->
+            <div>
+              <h3 class="text-xl font-bold mb-6">Discover</h3>
+              <ul class="space-y-3">
+                <li>
+                  <a
+                    href="{{ url_for('job_list') }}"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-briefcase mr-2 text-xs"></i>Browse Jobs
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-building mr-2 text-xs"></i>Companies
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-chart-line mr-2 text-xs"></i>Salary Guide
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-graduation-cap mr-2 text-xs"></i>Career
+                    Advice
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-file-alt mr-2 text-xs"></i>Resume Builder
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-bell mr-2 text-xs"></i>Job Alerts
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- For Employers Section -->
+            <div>
+              <h3 class="text-xl font-bold mb-6">For Employers</h3>
+              <ul class="space-y-3">
+                {% if 'user_id' in session and session['user_type'] ==
+                'employer' %}
+                <li>
+                  <a
+                    href="{{ url_for('post_job') }}"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-plus mr-2 text-xs"></i>Post a Job
+                  </a>
+                </li>
+                {% endif %}
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-users mr-2 text-xs"></i>Employer Solutions
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-search mr-2 text-xs"></i>Talent Search
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-crown mr-2 text-xs"></i>Premium Plans
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-headset mr-2 text-xs"></i>Employer Support
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-question-circle mr-2 text-xs"></i>How it
+                    Works
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Support Section -->
+            <div>
+              <h3 class="text-xl font-bold mb-6">Support</h3>
+              <ul class="space-y-3">
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-life-ring mr-2 text-xs"></i>Help Center
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-envelope mr-2 text-xs"></i>Contact Us
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-shield-alt mr-2 text-xs"></i>Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-file-contract mr-2 text-xs"></i>Terms of
+                    Service
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-cookie-bite mr-2 text-xs"></i>Cookie Policy
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="text-blue-100 hover:text-white transition-colors duration-200 flex items-center"
+                  >
+                    <i class="fas fa-comment-dots mr-2 text-xs"></i>Feedback
+                  </a>
+                </li>
+              </ul>
+
+              <!-- Trust Badges -->
+              <div class="mt-8">
+                <p class="text-sm text-blue-100 mb-4">
+                  Trusted by professionals across Nepal
+                </p>
+                <div class="grid grid-cols-2 gap-2">
+                  <div
+                    class="bg-white bg-opacity-10 rounded-lg p-2 text-center"
+                  >
+                    <div class="text-xs text-blue-200">SSL Secured</div>
+                  </div>
+                  <div
+                    class="bg-white bg-opacity-10 rounded-lg p-2 text-center"
+                  >
+                    <div class="text-xs text-blue-200">Verified</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Copyright Bar -->
+      <div class="bg-primary-800 py-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            class="flex flex-col md:flex-row justify-between items-center text-sm text-blue-100"
+          >
+            <div class="mb-2 md:mb-0">
+              <p>
+                © 2024 Nepal Ma Rojgaar. All rights reserved. Made with
+                <i class="fas fa-heart text-red-400 mx-1"></i> in Nepal
+              </p>
+            </div>
+            <div class="flex space-x-6">
+              <a
+                href="#"
+                class="hover:text-white transition-colors duration-200"
+                >Privacy</a
+              >
+              <a
+                href="#"
+                class="hover:text-white transition-colors duration-200"
+                >Terms</a
+              >
+              <a
+                href="#"
+                class="hover:text-white transition-colors duration-200"
+                >Sitemap</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+    <!-- JavaScript for mobile menu toggle -->
+    <script>
+      document
+        .getElementById("mobile-menu-button")
+        .addEventListener("click", function () {
+          const mobileMenu = document.getElementById("mobile-menu");
+          mobileMenu.classList.toggle("hidden");
+        });
+
+      // Close mobile menu when clicking outside
+      document.addEventListener("click", function (event) {
+        const mobileMenu = document.getElementById("mobile-menu");
+        const mobileMenuButton = document.getElementById("mobile-menu-button");
+
+        if (
+          !mobileMenu.contains(event.target) &&
+          !mobileMenuButton.contains(event.target)
+        ) {
+          mobileMenu.classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
 </html>
